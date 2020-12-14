@@ -3,6 +3,7 @@ from window_settings import *
 
 INIT_SPEED = 30
 
+
 class Infected:
     def __init__(self, x, y, ms, hp, speedbonus, points):
         self.shadow = Sprite(
@@ -12,15 +13,14 @@ class Infected:
             resize=(PX(0.085), PY(0.1)),
         )
         self.bulletsponge = Sprite(
-            "./assets/sprites/EXTRAS/SpongeBullet.png",
-            1,
-            upscale=2)
+            "./assets/sprites/EXTRAS/SpongeBullet.png", 1, upscale=2
+        )
         if (x, y) == ((-PX(0.75)), (PY(0.222))):
-            self.current_plat = 'left'
+            self.current_plat = "left"
         elif (x, y) == ((PX(1.25)), (PY(0.222))):
-            self.current_plat = 'right'
+            self.current_plat = "right"
         else:
-            self.current_plat = 'floor'
+            self.current_plat = "floor"
 
         self.ms = ms
         self.hp = hp
@@ -36,12 +36,12 @@ class Infected:
         self.flip = False
         self.jumping = False
         self.falling = False
-        self.takinghit = False        
+        self.takinghit = False
         self.dead = False
         self.dying = False
         self.points = points
         self.action_counter = 0
-        self.current_action = 'none'
+        self.current_action = "none"
         self.next_frame = pygame.time.get_ticks()
 
     def get_sprite(self):
@@ -64,26 +64,43 @@ class Infected:
 
             totheleft = True if self.x > px else False
             totheright = True if not totheleft else False
-            isabove = True if (pplat == 'left' or pplat == 'right') and self.current_plat == 'floor' else False
+            isabove = (
+                True
+                if (pplat == "left" or pplat == "right")
+                and self.current_plat == "floor"
+                else False
+            )
             isbelow = True if not isabove else False
             if not self.isdead():
                 if self.hp <= 0:
                     self.death()
-                elif self.x > PX(0.37) and self.current_plat == 'left':
+                elif self.x > PX(0.37) and self.current_plat == "left":
                     self.run_left()
-                elif self.x < PX(0.63) and self.current_plat == 'right':
+                elif self.x < PX(0.63) and self.current_plat == "right":
                     self.run_right()
                 elif self.action_counter == 0:
                     self.action_counter = 300
-                    if pplat == 'mid' and self.current_plat == 'floor' and (PX(0.418) < self.x < PX(0.582)):
+                    if (
+                        pplat == "mid"
+                        and self.current_plat == "floor"
+                        and (PX(0.418) < self.x < PX(0.582))
+                    ):
                         self.jumping = True
                         if totheright:
                             self.run_right()
                         elif totheleft:
                             self.run_left()
-                    elif pplat == 'left' and self.current_plat == 'floor' and self.x > PX(0.9):
+                    elif (
+                        pplat == "left"
+                        and self.current_plat == "floor"
+                        and self.x > PX(0.9)
+                    ):
                         self.run_right()
-                    elif pplat == 'right' and self.current_plat == 'floor' and self.x < PX(0.1):
+                    elif (
+                        pplat == "right"
+                        and self.current_plat == "floor"
+                        and self.x < PX(0.1)
+                    ):
                         self.run_left()
                     elif totheright:
                         self.run_right()
@@ -92,18 +109,22 @@ class Infected:
                     else:
                         self.idle()
                 else:
-                    if pplat == 'mid' and self.current_plat == 'floor' and (PX(0.418) < self.x < PX(0.582)):
+                    if (
+                        pplat == "mid"
+                        and self.current_plat == "floor"
+                        and (PX(0.418) < self.x < PX(0.582))
+                    ):
                         self.jumping = True
-                    if self.current_action == 'runleft':
-                        if self.x < PX(0.63) and self.current_plat == 'right':
+                    if self.current_action == "runleft":
+                        if self.x < PX(0.63) and self.current_plat == "right":
                             self.run_right()
                         else:
                             self.run_left()
-                    elif self.current_action == 'runright':
-                        if self.x > PX(0.37) and self.current_plat == 'left':
+                    elif self.current_action == "runright":
+                        if self.x > PX(0.37) and self.current_plat == "left":
                             self.run_left()
                         self.run_right()
-                    elif self.current_action == 'idle':
+                    elif self.current_action == "idle":
                         self.idle()
                     self.action_counter -= 1
 
@@ -131,7 +152,7 @@ class Infected:
         sprites.add(self.shadow)
 
     def idle(self):
-        self.current_action = 'idle'
+        self.current_action = "idle"
         self.crouching = False
         self.current_sprite = self.ms["idle"]
         if pygame.time.get_ticks() > self.next_frame:
@@ -140,7 +161,7 @@ class Infected:
         self.current_frame = self.frame["idle"]
 
     def run_right(self):
-        self.current_action = 'runright'
+        self.current_action = "runright"
         self.flip = False
         if not self.jumping:
             self.current_sprite = self.ms["run"]
@@ -151,20 +172,19 @@ class Infected:
         self.x += self.speed
 
         if self.x > PX(1):
-            if self.current_plat == 'right':
-                self.current_plat = 'floor'
+            if self.current_plat == "right":
+                self.current_plat = "floor"
                 self.y = PY(0.82)
-            elif self.current_plat == 'floor':
-                self.current_plat = 'left'
+            elif self.current_plat == "floor":
+                self.current_plat = "left"
                 self.y = PY(0.222)
             self.x = PX(0)
 
         if self.jumping:
             self.jump()
 
-
     def run_left(self):
-        self.current_action = 'runleft'
+        self.current_action = "runleft"
         self.flip = True
         if not self.jumping:
             self.current_sprite = self.ms["run"]
@@ -175,11 +195,11 @@ class Infected:
         self.x -= self.speed
 
         if self.x < PX(0):
-            if self.current_plat == 'left':
-                self.current_plat = 'floor'
+            if self.current_plat == "left":
+                self.current_plat = "floor"
                 self.y = PY(0.82)
-            elif self.current_plat == 'floor':
-                self.current_plat = 'right'
+            elif self.current_plat == "floor":
+                self.current_plat = "right"
                 self.y = PY(0.222)
             self.x = PX(1)
 
@@ -230,7 +250,6 @@ class Infected:
             self.current_frame = self.frame["death"]
         if self.frame["death"] == 3:
             self.dead = True
-
 
     def isdead(self):
         return self.dead

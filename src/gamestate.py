@@ -10,8 +10,12 @@ from projectile import Projectile
 from sprite import Sprite
 from window_settings import *
 
-SPAWNDICT = {'lfloor': ((-PX(0.75)), (PY(0.82))), 'rfloor': ((PX(1.25)), (PY(0.82))), 'left': ((-PX(0.75)), (PY(0.222))), 'right': ((PX(1.25)), (PY(0.222)))}
-
+SPAWNDICT = {
+    "lfloor": ((-PX(0.75)), (PY(0.82))),
+    "rfloor": ((PX(1.25)), (PY(0.82))),
+    "left": ((-PX(0.75)), (PY(0.222))),
+    "right": ((PX(1.25)), (PY(0.222))),
+}
 
 
 class GameState:
@@ -58,7 +62,6 @@ class GameState:
 
         return False
 
-
     def took_damage(self, player):
         for mob in self.mob_sprites:
             coll = pygame.sprite.collide_rect(player, mob)
@@ -69,7 +72,7 @@ class GameState:
 
     def add_mob(self):
         num = str(random.randint(1, 5))
-        loc = random.choice(['lfloor', 'rfloor', 'left', 'right'])
+        loc = random.choice(["lfloor", "rfloor", "left", "right"])
         hp = random.randint(10, 40) + self.hpbonus
         points = random.randint(100, 200)
         idle = Sprite("./assets/sprites/MOBS/" + num + "/Idle.png", 4, upscale=2)
@@ -77,7 +80,13 @@ class GameState:
         jump = Sprite("./assets/sprites/MOBS/" + num + "/Jump.png", 2, upscale=2)
         takehit = Sprite("./assets/sprites/MOBS/" + num + "/Take Hit.png", 4, upscale=2)
         death = Sprite("./assets/sprites/MOBS/" + num + "/Death.png", 4, upscale=2)
-        ms = {"idle": idle, "run": run, "jump": jump, "takehit": takehit, "death": death}
+        ms = {
+            "idle": idle,
+            "run": run,
+            "jump": jump,
+            "takehit": takehit,
+            "death": death,
+        }
         mob = Infected(*SPAWNDICT[loc], ms, hp, self.speedbonus, points)
         self.mobs.addmob(mob)
 

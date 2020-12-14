@@ -1,6 +1,8 @@
+import random
+
 from sprite import Sprite
 from window_settings import *
-import random
+
 
 class Mobs:
     def __init__(self):
@@ -18,7 +20,7 @@ class Mobs:
     def updatemobs(self, sprites, state, player, pplat):
         for i, mob in enumerate(self.mob_list):
             if mob.isdead():
-                print('removing')
+                print("removing")
                 sprites.remove(mob)
                 self.mob_list.pop(i)
             else:

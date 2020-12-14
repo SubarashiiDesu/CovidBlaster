@@ -2,7 +2,6 @@ from sprite import Sprite, jforce
 from window_settings import *
 
 
-
 class Player:
     def __init__(self, ps, difficulty):
         self.ps = ps
@@ -59,44 +58,26 @@ class Player:
     def update(self, sprites, state):
         sprites.remove(self.current_sprite)
 
-        # taken_hit = state.took_damage(self.current_sprite)
+        self.event = pygame.event.poll()
+        self.keys = pygame.key.get_pressed()
 
-        # if self.immune_system == 0:
-        #     self.dying = True
+        if self.keys[pygame.K_DOWN]:
+            if not self.crouching:
+                self.crouch()
+        elif self.keys[pygame.K_RIGHT] and not self.falling_from_platform:
+            self.run_right()
+        elif self.keys[pygame.K_LEFT] and not self.falling_from_platform:
+            self.run_left()
+        else:
+            self.idle()
 
-        if not self.dying:
-            self.event = pygame.event.poll()
-            self.keys = pygame.key.get_pressed()
+        if self.jumping:
+            self.jump()
 
-            if self.keys[pygame.K_DOWN]:
-                if not self.crouching:
-                    self.crouch()
-            elif self.keys[pygame.K_RIGHT] and not self.falling_from_platform:
-                self.run_right()
-            elif self.keys[pygame.K_LEFT] and not self.falling_from_platform:
-                self.run_left()
-            else:
-                self.idle()
+        if self.falling:
+            self.current_frame = self.frame["jump"]
+            self.fall(state)
 
-            if self.jumping:
-                self.jump()
-
-            if self.falling:
-                self.current_frame = self.frame["jump"]
-                self.fall(state)
-                
-        #     if taken_hit and not self.taking_hit:
-        #         self.taking_hit = True
-        #         self.immunity_counter = 50
-        #         self.take_hit_sfx.play()
-        #         self.take_hit()
-        #     elif self.taking_hit:
-        #         self.immunity_counter -= 1
-        #         self.take_hit()
-
-
-        # if self.dying:
-        #     self.death()      
         self.update_shadow(sprites)
         self.current_sprite.update_sprite(self.current_frame, self.flip)
         self.current_sprite.move(self.x, self.y)
@@ -108,8 +89,6 @@ class Player:
         yshadow = self.y + PY(0.076) if not self.is_airborne() else PY(1) - PY(0.086)
         self.shadow.move(self.x - xshadow, yshadow)
         sprites.add(self.shadow)
-
-
 
     def idle(self):
         self.is_idle = True
@@ -135,7 +114,7 @@ class Player:
             if self.current_plat == "right":
                 self.current_plat = "left"
 
-        if not self.jumping:
+        if not self.is_airborne():
             if self.current_plat == "left" and self.x > PX(0.37):
                 self.yspeed = 20
                 self.jumping = True
@@ -144,6 +123,8 @@ class Player:
                 self.yspeed = 20
                 self.jumping = True
                 self.falling_from_platform = True
+
+        self.handle_events(self.event)
 
     def run_left(self):
         self.is_idle = False
@@ -160,7 +141,7 @@ class Player:
             if self.current_plat == "left":
                 self.current_plat = "right"
 
-        if not self.jumping:
+        if not self.is_airborne():
             if self.current_plat == "right" and self.x < PX(0.63):
                 self.yspeed = 20
                 self.jumping = True
@@ -169,6 +150,8 @@ class Player:
                 self.yspeed = 20
                 self.jumping = True
                 self.falling_from_platform = True
+
+        self.handle_events(self.event)
 
     def shoot(self):
         if self.shooting:
@@ -254,7 +237,6 @@ class Player:
         if self.immunity_counter == 0:
             self.immune_system -= 1
             self.taking_hit = False
-
 
     def death(self):
         pygame.mixer.music.load(GAMEOVER)

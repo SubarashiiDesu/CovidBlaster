@@ -8,7 +8,7 @@
 #         self.sec_int = 0
 #         self.min_int = 0
 
-#         self.sec = clockfont.render(str(self.sec_int).zfill(2), True, (255,255,255))        
+#         self.sec = clockfont.render(str(self.sec_int).zfill(2), True, (255,255,255))
 #         self.min = clockfont.render(str(self.min_int).zfill(2)+' :', True, (255,255,255))
 
 #         self.lastframe = 0
